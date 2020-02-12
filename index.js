@@ -14,8 +14,7 @@ const coursesRoutes = require('./routes/courses');
 const authRoutes = require('./routes/auth');
 const varMiddleware = require('./middleware/variables');
 const userMiddleware = require('./middleware/user');
-
-const MONGODB_URI = 'mongodb+srv://Eugene:V884A6OZI7ZTHTMK@cluster0-nfel1.mongodb.net/shop';
+const keys = require('./keys');
 
 const app = express();
 
@@ -26,7 +25,7 @@ const hbs = exphbs.create({
 
 const store = new MongoStore({
   collection: 'sessions',
-  uri: MONGODB_URI,
+  uri: keys.MONGODB_URI,
 });
 
 app.engine('hbs', hbs.engine);
@@ -36,7 +35,7 @@ app.set('views', 'views');
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.urlencoded({ extended: true }));
 app.use(session({
-  secret: 'some secret value',
+  secret: keys.SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
   store,
@@ -58,7 +57,7 @@ const PORT = process.env.PORT || 3000;
 async function start() {
   try {
     // eslint-disable-next-line max-len
-    await mongoose.connect(MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false });
+    await mongoose.connect(keys.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false });
 
     app.listen(PORT, () => {
       console.log(`Server is running on port: ${PORT}`);
